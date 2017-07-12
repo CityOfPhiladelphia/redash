@@ -27,7 +27,7 @@ scheduler() {
 }
 
 server() {
-  exec /usr/local/bin/gunicorn -b 0.0.0.0:5000 --name redash -w4 redash.wsgi:app
+  exec /usr/local/bin/gunicorn -b 0.0.0.0:5003 --name redash -w4 redash.wsgi:app
 }
 
 help() {
