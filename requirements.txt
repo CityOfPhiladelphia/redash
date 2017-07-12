@@ -43,3 +43,5 @@ pystache==0.5.4
 parsedatetime==2.1
 cryptography==1.4
 simplejson==3.10.0
+
+eventlet==0.21.0
