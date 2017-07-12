@@ -1,7 +1,5 @@
 FROM ubuntu:xenial
 
-EXPOSE 5003
-
 RUN useradd --create-home redash
 
 ENV LANGUAGE C.UTF-8

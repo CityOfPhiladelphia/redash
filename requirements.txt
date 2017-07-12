@@ -44,4 +44,5 @@ parsedatetime==2.1
 cryptography==1.4
 simplejson==3.10.0
 
-eventlet==0.21.0
+gevent==1.2.2
+greenlet==0.4.12
