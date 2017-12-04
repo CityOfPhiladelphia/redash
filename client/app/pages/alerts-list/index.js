@@ -1,4 +1,4 @@
-import { Paginator } from '../../utils';
+import { Paginator } from '@/lib/pagination';
 import template from './alerts-list.html';
 
 const stateClass = {
@@ -14,6 +14,7 @@ class AlertsListCtrl {
     this.alerts = new Paginator([], { itemsPerPage: 20 });
     Alert.query((alerts) => {
       this.alerts.updateRows(alerts.map(alert => ({
+        id: alert.id,
         name: alert.name,
         state: alert.state,
         class: stateClass[alert.state],
@@ -25,7 +26,7 @@ class AlertsListCtrl {
   }
 }
 
-export default function (ngModule) {
+export default function init(ngModule) {
   ngModule.component('alertsListPage', {
     template,
     controller: AlertsListCtrl,

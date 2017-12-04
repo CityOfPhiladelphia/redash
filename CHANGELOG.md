@@ -1,6 +1,90 @@
 # Change Log
 
-## v2.0.0 - UNRELEASED
+## v4.0.0 - UNRELEASED
+
+## v3.0.0 - 2017-11-13
+
+### Added
+
+- Query Result data source (run queries on query results).
+- Athena: option to load schema from Glue catalog. @myouju
+- Allow running any command inside the container via the Docker entrypoint script. @jezdez
+- Make invitation token max age configurable. @hhamalai
+- Redshift: add support for the new ACM root CA.
+- Redshift: support for Spectrum (external) tables. @atharvai
+- MongoDB: option to set allowDiskUse in queries.
+- Option to disable SQLAlchemy connection pool.
+- Option to set a time limit on adhoc queries.
+- Option to disable sending an invite to a new user.
+- Azure SQL Data Warehouse query runner. @kitsuyui
+- Prometheus query runner. @yershalom
+- Option to set the Flask-Limiter storage engine.
+- Option to set UnicodeWriter's error handling method. @fan-t-endo
+- PostgreSQL: SSL configuration option. @TylerBrock
+- Counter visualization: additional formatting options. @deecay
+- Query based drop down parameter. @rohithmenon
+- MySQL: multiple queries support & connection timeout.
+- Ability to select all in multi-filter. @Posnet
+- LDAP (Active Directory) support. @amarjayr
+
+### Changed
+
+- Copy parameters when forking a query. @kyoshidajp
+- Prevent using Query API Key with refresh API (previously it was just failing).
+- Reduce boilerplate in frontend code.
+- Set auto focus in first input items. @kyoshidajp
+- Update gunicorn to latest version.
+- Make log format configurable. 
+- Sort series by name. 
+- Allow setting test file with Docker test run. @meinac
+- Use outdated queries count stored already in Redis.
+- Show links based on permissions the user have. 
+- Cassandra: update driver version. @yershalom
+- Docker-Compose: update configuration to always restart services. @muddydixon
+- Modernize Python 2 code to get ready for Python 3. @cclauss
+- Cohort visualization: make it friendlier to use by better handle gaps in data, so it's easier to generate the data needed.
+- Use a different markdown library. @alexmuller
+- Salesforce: improve error messages we receive from the API. @akiray03
+- Custom JS code visualization improvements. @deecay
+- DQL: Update version to 0.5.24. @aterreno
+- Cassandra: get_schema support for both C* 2.x and 3.x, support for SortedSet type serialization. (@mfouilleul)
+- Replace deprecated ng-annotate with babel plugin. @44px
+- Update Python dependencies to recent versions. @alison985
+- Bootstrap script: create /opt/redash directory only if it doesn't exist. @isomura
+- Bootstrap script: make use of REDASH_BASE_PATH variable in setup script. @sylvain
+
+### Fixed
+
+- Require full data source access to fork a query.
+- API key of one query could be used to get results of another one.
+- Delete group id from user object when deleting the group. @kyoshidajp
+- Sorting of X axis wasn't working for Box plot type visualizations. @deecay
+- Exporting query results as excel was failing when one of the columns had array data. @kyoshidajp
+- Show query editor's Archive/Publish Query drop-down only on saved queries. @cyriac
+- Move misplaced configuration in docker-compose.production.yml. @yutannihilation
+- MySQL: support UTF8 schema.
+- TreasureData queries were failing when returning 0 rows.
+- Use series color for Boxplot. @deecay
+- Revoke permission should respect to given grantee and access type. @meinac
+- Fixed eslint "Cannot read property 'length' of undefined" error. @kravets-levko
+- Don't crash query editor when there are unclosed curly brackets. 
+- Error value in charts wasn't displayed if it was 0.
+- Prevent line breaks in EditInPlace description when using Firefox. @alexmuller
+- Queries#all_queries was sometimes returning wrong number of queries.
+- record_event fails for API events.
+- Cancel button on tasks admin page was broken.
+- Remove deprecated cx_Oracle types. @queeno
+- Textbox widgets were updating their value even when editor was cancelled. @alison985
+- Collaborators couldn't edit visualizations or schedule.
+- Use series color for error bar. @deecay
+- Upgrade script was using the wrong restart command on new AMIs.
+
+## v2.0.1 - 2017-10-22
+
+This is a patch release, that adds support for Redshift ACM certificates (see #2044 for details).
+
+
+## v2.0.0 - 2017-08-08
 
 ### Added
 
@@ -18,6 +102,19 @@
 - Add: option to hide pivot table controls. @deecay
 - Retry reload of query results if it had an error.
 - [Data Sources] Add: MemSQL query runner. @alexanderlz
+- "Dumb" recents option (see #1779 for details)
+- Athena: direct query runner using the instead of JDBC proxy. @laughingman7743
+- Optionally support parameters in embeds. @ziahamza
+- Sorting ability in alerts view.
+- Option to change default encoding of CSV writer. @yamamanx
+- Ability to set dashboard level filters from UI.
+- CLI command to open IPython shell.
+- Add link to query page from admin view. @miketheman
+- Add the option to write logs to STDOUT instead of STDERR. @eyalzek
+- Add limit parameter to tasks API. @alexpekurovsky
+- Add SQLAlchemy pool settings.
+- Support for category type y axis.
+- Add 12 & 24 hours refresh rate option to dashboards.
 
 ### Changed
 
@@ -44,6 +141,20 @@
 - Split refresh schemas into separate tasks and add a timeout.
 - Execute scheduled queries with parameters using their default value.
 - Keep track of last query execution (including failed ones) for scheduling purposes.
+- Same view for input on search result page as in header. @44px
+- Metrics: report endpoints without dots for metrics.
+- Redirect to / when org not found.
+- Improve parameters label placement. @44px
+- Auto-publish queries when they are named (with option to disable; #1830).
+- Show friendly error message in case of duplicate data source name.
+- Don't allow saving dashboard with empty name.
+- Enable strict checking for Angular DI.
+- Disable Angular debug info (should improve performance).
+- Update to Webpack 2. @44px
+- Remove /forgot endpoint if REDASH_PASSWORD_LOGIN_ENABLED is false. @amarjayr
+- Docker: make Gunicorn worker count configurable. @unixwitch
+- Snowflake support is no longer enabled by default.
+- Enable memory optimization for Excel exporter.
 
 ### Fixed
 
@@ -53,6 +164,24 @@
 - [SQLite] better handle utf-8 error messages.
 - Fix: don't remove locks for queries with task status of PENDING.
 - Only split columns with __/:: that end with filter/MultiFilter.
+- Alert notifications fail (sometime) with a SQLAlchemy error.
+- Safeguard against empty query results when checking alert status. @danielerapati
+- Delete data source doesn't work when query results referenced by queries.
+- Fix redirect to /setup on the last setup step. @44px
+- Cassandra: use port setting in connection options. @yershalom
+- Metrics: table name wasn't found for count queries.
+- BigQuery wasn't loading due to bad import.
+- DynamicForm component was inserting empty values.
+- Clear null values from data source options dictionary.
+- /api/session API call wasn't working when multi tenancy enabled
+- If column had no type it would use previous column's type.
+- Alert destination details were not updating.
+- When setting rearm on a new alert, it wasn't persisted.
+- Salesforce: sandbox parameter should be optional. @msnider
+- Alert page wasn't properly linked from alerts list. @alison985
+- PostgreSQL passwords with spaces were not supported. (#1056)
+- PivotTable wasn't updating after first save.
+
 
 ## v1.0.3 - 2017-04-18
 

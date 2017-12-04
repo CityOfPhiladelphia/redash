@@ -1,11 +1,11 @@
-import { pick, any, some, find } from 'underscore';
+import { pick, any, some, find, min, isObject } from 'underscore';
 import template from './query.html';
 
-function QueryViewCtrl($scope, Events, $route, $routeParams, $location, $window, $q,
+function QueryViewCtrl(
+  $scope, Events, $route, $routeParams, $location, $window, $q,
   KeyboardShortcuts, Title, AlertDialog, Notifications, clientConfig, toastr, $uibModal,
-  currentUser, Query, DataSource) {
-  const DEFAULT_TAB = 'table';
-
+  currentUser, Query, DataSource,
+) {
   function getQueryResult(maxAge) {
     if (maxAge === undefined) {
       maxAge = $location.search().maxAge;
@@ -32,8 +32,7 @@ function QueryViewCtrl($scope, Events, $route, $routeParams, $location, $window,
     // If we had an invalid value in localStorage (e.g. nothing, deleted source),
     // then use the first data source
     const isValidDataSourceId = !isNaN(dataSourceId) && some($scope.dataSources, ds =>
-       ds.id === dataSourceId
-    );
+      ds.id === dataSourceId);
 
     if (!isValidDataSourceId) {
       dataSourceId = $scope.dataSources[0].id;
@@ -76,8 +75,7 @@ function QueryViewCtrl($scope, Events, $route, $routeParams, $location, $window,
   function updateDataSources(dataSources) {
     // Filter out data sources the user can't query (or used by current query):
     $scope.dataSources = dataSources.filter(dataSource =>
-       !dataSource.view_only || dataSource.id === $scope.query.data_source_id
-    );
+      !dataSource.view_only || dataSource.id === $scope.query.data_source_id);
 
     if ($scope.dataSources.length === 0) {
       $scope.noDataSources = true;
@@ -112,7 +110,7 @@ function QueryViewCtrl($scope, Events, $route, $routeParams, $location, $window,
     Notifications.getPermissions();
   };
 
-
+  $scope.selectedTab = 'table';
   $scope.currentUser = currentUser;
   $scope.dataSource = {};
   $scope.query = $route.current.locals.query;
@@ -135,6 +133,7 @@ function QueryViewCtrl($scope, Events, $route, $routeParams, $location, $window,
   $scope.queryExecuting = false;
 
   $scope.isQueryOwner = (currentUser.id === $scope.query.user.id) || currentUser.hasPermission('admin');
+  $scope.canEdit = currentUser.canEdit($scope.query) || $scope.query.can_edit;
   $scope.canViewSource = currentUser.hasPermission('view_source');
 
   $scope.canExecuteQuery = () => currentUser.hasPermission('execute_query') && !$scope.dataSource.view_only;
@@ -333,7 +332,7 @@ function QueryViewCtrl($scope, Events, $route, $routeParams, $location, $window,
   }
 
   $scope.openScheduleForm = () => {
-    if (!$scope.isQueryOwner || !$scope.canScheduleQuery) {
+    if (!$scope.canEdit || !$scope.canScheduleQuery) {
       return;
     }
 
@@ -357,11 +356,18 @@ function QueryViewCtrl($scope, Events, $route, $routeParams, $location, $window,
     });
   };
 
-  $scope.$watch(() =>
-     $location.hash()
-  , (hash) => {
-    $scope.selectedTab = hash || DEFAULT_TAB;
-  });
+  $scope.$watch(
+    () => $location.hash(),
+    (hash) => {
+      // eslint-disable-next-line eqeqeq
+      const exists = find($scope.query.visualizations, item => item.id == hash);
+      let visualization = min($scope.query.visualizations, viz => viz.id);
+      if (!isObject(visualization)) {
+        visualization = {};
+      }
+      $scope.selectedTab = (exists ? hash : visualization.id) || 'table';
+    },
+  );
 
   $scope.showManagePermissionsModal = () => {
     $uibModal.open({
@@ -373,7 +379,7 @@ function QueryViewCtrl($scope, Events, $route, $routeParams, $location, $window,
   };
 }
 
-export default function (ngModule) {
+export default function init(ngModule) {
   ngModule.controller('QueryViewCtrl', QueryViewCtrl);
 
   return {

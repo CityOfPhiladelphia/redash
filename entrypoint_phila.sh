@@ -27,7 +27,7 @@ scheduler() {
 }
 
 server() {
-  exec /usr/local/bin/gunicorn -b 0.0.0.0:5003 --worker-class=eventlet --name redash -w4 redash.wsgi:app
+  exec /usr/local/bin/gunicorn -b 0.0.0.0:5003 --worker-class=gevent --name redash -w4 redash.wsgi:app
 }
 
 help() {
