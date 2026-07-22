@@ -41,7 +41,7 @@ semver==2.2.1
 xlsxwriter==0.9.3
 pystache==0.5.4
 parsedatetime==2.1
-cryptography==2.0.2
+cryptography==48.0.1
 simplejson==3.10.0
 gevent==1.2.2
 greenlet==0.4.12
